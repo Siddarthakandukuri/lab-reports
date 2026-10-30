@@ -1,0 +1,1 @@
+Save your own browser or Postman screenshots in this folder. Suggested names: home.png, about.png, time.png, not-found.png.
