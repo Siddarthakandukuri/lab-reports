@@ -6,7 +6,7 @@
 
 ## Live link
 
-Not deployed yet. Add your public deployment URL here after deploying.
+https://lab-reports-v2rd.onrender.com/
 
 ## Objective
 
