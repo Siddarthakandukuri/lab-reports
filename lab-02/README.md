@@ -1,6 +1,6 @@
 # Lab 2: SQLite database and CRUD routes
 
-**Name:** YOUR NAME · **Registration number:** YOUR REG NO · **Section:** YOUR SECTION
+**Name:** K.siddartha· **Registration number:** 252U1R9022 · **Section:** CSE-GEN-AI-2A-304
 
 **Live link:** PASTE PUBLIC URL HERE (or explain below why the project could not be deployed)
 
