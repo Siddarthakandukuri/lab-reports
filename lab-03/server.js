@@ -1,4 +1,5 @@
 const express = require("express");
+const fs = require("fs");
 const path = require("path");
 const { open } = require("sqlite");
 const sqlite3 = require("sqlite3");
@@ -6,12 +7,24 @@ const sqlite3 = require("sqlite3");
 const app = express();
 app.use(express.json());
 
-const dbPath = path.join(__dirname, "books.db");
 const PORT = process.env.PORT || 3000;
+const localDbPath = path.join(__dirname, "books.db");
+const writableDbPath = path.join("/tmp", "books.db");
+const dbPath = process.env.DB_PATH || writableDbPath;
 let db = null;
+
+const ensureDatabaseFile = () => {
+  if (!fs.existsSync(writableDbPath) && fs.existsSync(localDbPath)) {
+    fs.copyFileSync(localDbPath, writableDbPath);
+  }
+  if (!fs.existsSync(writableDbPath)) {
+    throw new Error("Database file is missing. Add books.db or provide DB_PATH.");
+  }
+};
 
 const initializeDBAndServer = async () => {
   try {
+    ensureDatabaseFile();
     db = await open({ filename: dbPath, driver: sqlite3.Database });
     await db.exec(`CREATE TABLE IF NOT EXISTS book (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,12 +33,17 @@ const initializeDBAndServer = async () => {
       price INTEGER,
       pages INTEGER
     )`);
-    app.listen(PORT, () => {
-      console.log(`Server running at http://localhost:${PORT}/`);
-    });
+
+    if (require.main === module) {
+      app.listen(PORT, () => {
+        console.log(`Server running at http://localhost:${PORT}/`);
+      });
+    }
   } catch (e) {
     console.log(`DB Error: ${e.message}`);
-    process.exit(1);
+    if (require.main === module) {
+      process.exit(1);
+    }
   }
 };
 
@@ -189,3 +207,5 @@ app.use((err, req, res, next) => {
 app.use((req, res) => sendError(res, 404, "Route not found"));
 
 initializeDBAndServer();
+
+module.exports = app;
